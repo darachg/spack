@@ -94,11 +94,11 @@ class Mumps(Package):
             makefile_conf.extend([
                 "ISCOTCH = -I%s" % self.spec['scotch'].prefix.include,
                 "LSCOTCH = -L%s %s%s %s" % (self.spec['scotch'].prefix.lib,
-                                         join_lib,
-                                         join_lib.join(['esmumps',
-                                                        'scotch',
-                                                        'scotcherr']),
-                                                '-lscotch')
+                                            join_lib,
+                                            join_lib.join(['esmumps',
+                                                           'scotch',
+                                                           'scotcherr']),
+                                            '-lscotch')
             ])
 
             orderings.append('-Dscotch')
