@@ -61,7 +61,7 @@ class Mumps(Package):
     variant('shared', default=True, description='Build shared libraries')
 
     depends_on('scotch + esmumps', when='~ptscotch+scotch')
-    depends_on('scotch + esmumps + mpi', when='+ptscotch')
+    depends_on('scotch + esmumps ~ metis + mpi', when='+ptscotch')
     depends_on('metis@5:', when='+metis')
     depends_on('parmetis', when="+parmetis")
     depends_on('blas')
@@ -93,11 +93,12 @@ class Mumps(Package):
             join_lib = ' -l%s' % ('pt' if '+ptscotch' in self.spec else '')
             makefile_conf.extend([
                 "ISCOTCH = -I%s" % self.spec['scotch'].prefix.include,
-                "LSCOTCH = -L%s %s%s" % (self.spec['scotch'].prefix.lib,
+                "LSCOTCH = -L%s %s%s %s" % (self.spec['scotch'].prefix.lib,
                                          join_lib,
                                          join_lib.join(['esmumps',
                                                         'scotch',
-                                                        'scotcherr']))
+                                                        'scotcherr']),
+                                                '-lscotch')
             ])
 
             orderings.append('-Dscotch')
@@ -106,7 +107,8 @@ class Mumps(Package):
 
         if '+parmetis' in self.spec and '+metis' in self.spec:
             makefile_conf.extend([
-                "IMETIS = -I%s" % self.spec['parmetis'].prefix.include,
+                "IMETIS = -I%s -I%s" % (self.spec['metis'].prefix.include,
+                                        self.spec['parmetis'].prefix.include),
                 "LMETIS = -L%s -l%s -L%s -l%s" % (
                     self.spec['parmetis'].prefix.lib, 'parmetis',
                     self.spec['metis'].prefix.lib, 'metis')
